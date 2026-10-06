@@ -6,13 +6,13 @@ from celery_app import celery_app
 @celery_app.task
 def generate_website_report(url):
 	
-	start_time = time.perfcounter()
+	start_time = time.perf_counter()
 	response = httpx.get(
 		url,
 		timeout=10, 
 		follow_redirects = True
 	)
-	end_time = time.perfcounter()
+	end_time = time.perf_counter()
 	response_time_ms = round(
 		(end_time-start_time)*1000
 	)
@@ -20,7 +20,7 @@ def generate_website_report(url):
 
 	soup = BeautifulSoup(
 		response.text,
-		"lxml"
+		"html.parser"
 	)
 
 	title = soup.title.string if soup.title else None
@@ -31,6 +31,6 @@ def generate_website_report(url):
 		"status_code":response.status_code,
 		"response_time_ms": response_time_ms,
 		"title":title,
-		"links": len(soup.findall("a")),
-		"images": len(soup.findall("img"))
+		"links": len(soup.find_all("a")),
+		"images": len(soup.find_all("img"))
 	}

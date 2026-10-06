@@ -12,7 +12,7 @@ def create_report(url:str):
 	
 	task = generate_website_report.delay(url)
 	return {
-		"job_id": "task.id",
+		"job_id": task.id,
 		"status": "Pending"
 	}
 
@@ -30,10 +30,10 @@ def get_report(job_id:str):
 		"status":task.status
 	}
 
-	if task.sucessfull():
+	if task.successful():
 		response["result"] = task.result
 	if task.failed():
-		responce["error"] = str(task.result)
+		response["error"] = str(task.result)
 
 	return response
 
